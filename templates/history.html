@@ -1,0 +1,48 @@
+
+    
+{% extends "template.html" %}
+
+{% block title %}Dự đoán Ung thư Cổ tử cung{% endblock %}
+
+{% block content %}
+<div class="container">
+        <h1>Lịch sử Dự đoán Ung thư Cổ tử cung</h1>
+        <a href="/">← Quay lại</a>
+        {% if history %}
+        <table border="1" cellpadding="5">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Kết quả</th>
+                    <th>Xác suất</th>
+                    <th>Chi tiết</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in history %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ "🔴 Nguy cơ cao" if item.result == 1 else "🟢 Nguy cơ thấp" }}</td>
+                    <td>{{ item.proba }}%</td>
+                    <td>
+                        <details>
+                            <summary>Xem</summary>
+                            <ul>
+                            {% for key, value in item.input.items() %}
+                                {% if value %}
+                                <li><strong>{{ label_mapping.get(key, key) }}:</strong> {{ value }}</li>
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                        </details>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>Chưa có dự đoán nào được lưu.</p>
+        {% endif %}
+    </div>
+
+{% endblock %}

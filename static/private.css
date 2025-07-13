@@ -1,0 +1,188 @@
+.grid {
+    width: 100%;  /* để các phần trăm bên trong đúng */
+    max-width: 2000px;
+    margin: 0 auto;
+}
+
+
+.grid__full-width{
+    width: 100%; 
+}
+.grid__row{
+    display: flex; 
+    flex-wrap: wrap;
+}
+
+
+.header {
+    height: 120px;
+    background: linear-gradient(to right, #182a60, #344a9f); /* trái sang phải */
+}
+
+
+/* Căn lại logo sát trái hơn, dùng % */
+.header__logo {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    margin-left: 1.5%; /* 👈 càng nhỏ càng sát */
+}
+
+/* Giảm kích thước để phù hợp nhiều màn hình */
+.header__logo-img {
+    height: 55px;
+    object-fit: contain;
+}
+
+/* Đảm bảo logo và danh sách bên trái thẳng hàng */
+
+.header__navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px 0;
+}
+
+.header__navbar-left,
+.header__navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+
+.header__navbar-left {
+    flex: 1;
+    justify-content: flex-start;
+    padding-left: 1%;
+    gap: 16px;
+}
+
+.header__navbar-center {
+    flex: 2;
+    text-align: center;
+}
+
+.header__navbar-right {
+    flex: 1;
+    justify-content: flex-end;
+    padding-right: 1%;
+    gap: 16px;
+}
+
+
+.header__slogan {
+    font-family: 'Great Vibes', cursive;
+    font-size: 48px; /* 👈 Tăng từ 36px lên 42px */
+    font-weight: 400;
+    color: #fff;
+    margin: 0;
+    padding: 12px 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+}
+
+/* Icon chỉnh cho đẹp */
+.header__navbar-item-link i {
+    margin-right: 6px;
+    font-size: 18px;
+}
+
+
+.header__navbar-list{
+    list-style: none;
+    padding-left: 0px; 
+}
+.header__navbar-item{
+    margin: 0 8px;
+    position:relative; 
+}
+.header__navbar-item--doc {
+    padding-right: 12px;
+    margin-right: 8px;
+    position: relative;
+}
+.header__navbar-item--doc:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 24px;
+    background-color: #8c8892;
+}
+
+.header__navbar-item--strong{
+    font-weight: 600;
+}
+.header__navbar-item,
+.header__navbar-item-link{
+    display: inline-block;
+    font-size: 23px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.header__navbar-item:hover,
+.header__navbar-item-link:hover{
+    color: rgba(255,255, 255, 0.7 );
+    cursor: pointer;
+}
+
+.header__logo{
+    display: flex; 
+    align-items: center;
+    text-decoration: none;
+    margin-right: 24px;
+}
+.header__logo-img{
+    height: 60px;
+    object-fit: contain;
+}
+
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Phần nội dung chính */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+/* Footer styling giữ nguyên hoặc điều chỉnh lại */
+footer {
+    background-color: #002f6c;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    font-size: 16px;
+}
+
+footer .iconfoot {
+    color: #ed4190;
+    font-size: 20px;
+    margin: 0 10px;
+    transition: transform 0.2s ease;
+}
+
+footer .iconfoot:hover {
+    transform: scale(1.2);
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+.social-icons {
+    margin: 10px 0;
+}
+

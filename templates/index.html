@@ -1,0 +1,440 @@
+
+
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dự đoán Ung thư Cổ tử cung</title>
+    <!-- Gợi ý: Dùng Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='private.css') }}">
+</head>
+
+<body>
+    <!-- Toàn bộ phần nội dung bạn dán ở trên được giữ nguyên từ đây... -->
+    
+    <div class="wrapper">
+      <header class="header">
+    <div class="grid">
+      <nav class="header__navbar">
+        <!-- Nhóm trái: logo + menu -->
+        <div class="header__navbar-left">
+          <a href="/" class="header__logo">
+            <img src="/static/images/depositphotos_89720090-stock-illustration-breast-cancer-awareness-removebg-preview.png" alt="Logo" class="header__logo-img">
+          </a>
+
+          <ul class="header__navbar-list">
+            <li class="header__navbar-item header__navbar-item--doc">
+              <a href="/history" class="header__navbar-item-link">
+                <i class="fa-solid fa-clock-rotate-left"></i> Xem lịch sử dự đoán
+              </a>
+            </li>
+
+            <li class="header__navbar-item header__navbar-item--doc">
+              <a href="https://bvubct.vn/" class="header__navbar-item-link">
+                <i class="fa-solid fa-link"></i> Kết nối
+              </a>
+            </li>
+
+            <li class="header__navbar-item">
+              <a href="/monitor" class="header__navbar-item-link">
+                <i class="fa-solid fa-user-doctor"></i> Theo dõi Sức khỏe
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Nhóm giữa -->
+        <div class="header__navbar-center">
+          <h1 class="header__slogan">Vì một tương lai không còn ung thư cổ tử cung.</h1>
+        </div>
+
+        <!-- Nhóm phải -->
+       <!-- Nhóm phải -->
+        <div class="header__navbar-right">
+        <ul class="header__navbar-list">
+            <li class="header__navbar-item">
+            <a href="#" class="header__navbar-item-link" onclick="openChatbox()">
+                <i class="fa-solid fa-circle-question"></i> Trợ giúp
+            </a>
+          </li>
+        </ul>
+        </div>
+
+      </nav>
+    </div>
+  </header>
+
+
+
+    <div class = "overlay"> </div>
+    <div class="container">
+        <h1>Dự đoán nguy cơ Ung thư Cổ tử cung</h1>
+
+
+        <form method="POST">
+            <!-- Grid 2 cột -->
+            <div class="form-grid">
+                {% set binary_features = [
+                'Smokes', 'Hormonal Contraceptives', 'IUD', 'STDs',
+                'STDs:condylomatosis', 'STDs:cervical condylomatosis',
+                'STDs:vaginal condylomatosis', 'STDs:vulvo-perineal condylomatosis',
+                'STDs:syphilis', 'STDs:pelvic inflammatory disease',
+                'STDs:genital herpes', 'STDs:molluscum contagiosum',
+                'STDs:AIDS', 'STDs:HIV', 'STDs:Hepatitis B', 'STDs:HPV',
+                'Dx:Cancer', 'Dx:CIN', 'Dx:HPV', 'Dx',
+                'Hinselmann', 'Schiller', 'Citology', 'Biopsy'
+                ] %}
+
+                {% set label_mapping = {
+                'Age': 'Tuổi',
+                'Number of sexual partners': 'Số bạn tình',
+                'First sexual intercourse': 'Tuổi quan hệ lần đầu',
+                'Num of pregnancies': 'Số lần mang thai',
+                'Smokes': 'Có hút thuốc',
+                'Smokes (years)': 'Số năm hút thuốc',
+                'Smokes (packs/year)': 'Số gói mỗi năm',
+                'Hormonal Contraceptives': 'Dùng thuốc tránh thai',
+                'Hormonal Contraceptives (years)': 'Số năm dùng thuốc tránh thai',
+                'IUD': 'Đặt vòng',
+                'IUD (years)': 'Số năm đặt vòng',
+                'STDs': 'Từng mắc bệnh STDs',
+                'STDs (number)': 'Số lần mắc STDs',
+                'STDs:condylomatosis': 'Sùi mào gà',
+                'STDs:cervical condylomatosis': 'Sùi mào gà cổ tử cung',
+                'STDs:vaginal condylomatosis': 'Sùi mào gà âm đạo',
+                'STDs:vulvo-perineal condylomatosis': 'Sùi mào gà âm hộ - tầng sinh môn',
+                'STDs:syphilis': 'Bệnh giang mai',
+                'STDs:pelvic inflammatory disease': 'Viêm vùng chậu',
+                'STDs:genital herpes': 'Mụn rộp sinh dục',
+                'STDs:molluscum contagiosum': 'U mềm lây',
+                'STDs:AIDS': 'AIDS',
+                'STDs:HIV': 'HIV',
+                'STDs:Hepatitis B': 'Viêm gan B',
+                'STDs:HPV': 'Nhiễm HPV',
+                'STDs: Number of diagnosis': 'Số lần được chẩn đoán STDs',
+                'STDs: Time since first diagnosis': 'Thời gian từ lần chẩn đoán STDs đầu tiên',
+                'STDs: Time since last diagnosis': 'Thời gian từ lần chẩn đoán STDs gần nhất',
+                'Dx:Cancer': 'Từng được chẩn đoán ung thư',
+                'Dx:CIN': 'Từng được chẩn đoán CIN',
+                'Dx:HPV': 'Từng được chẩn đoán HPV',
+                'Dx': 'Từng có chẩn đoán bất thường',
+                'Hinselmann': 'Kết quả Hinselmann dương tính',
+                'Schiller': 'Kết quả Schiller dương tính',
+                'Citology': 'Kết quả tế bào học dương tính',
+                'Biopsy': 'Sinh thiết dương tính'
+                } %}
+                {% set parent_map = {
+                'Smokes (years)': 'Smokes',
+                'Smokes (packs/year)': 'Smokes',
+                'Hormonal Contraceptives (years)': 'Hormonal Contraceptives',
+                'IUD (years)': 'IUD',
+                'STDs (number)': 'STDs',
+                'STDs: Time since first diagnosis': 'STDs',
+                'STDs: Time since last diagnosis': 'STDs'
+                } %}
+
+               
+                {% for name in features %}
+    {% if name in parent_map %}
+    <div class="form-group dependent-field {{ parent_map[name] }}-child hidden">
+        <label>{{ label_mapping[name] }}</label>
+        <input type="number" step="any" name="{{ name }}">
+    </div>
+    {% else %}
+    <div class="form-group">
+        <label>{{ label_mapping[name] }}</label>
+        {% if name in binary_features %}
+        <select name="{{ name }}" onchange="handleDependency('{{ name }}')" {% if name in ['Smokes', 'Hormonal Contraceptives' , 'IUD' , 'STDs' ] %} data-toggle-parent="true" {% endif %}>
+            <option value="">--</option>
+            <option value="0">Không</option>
+            <option value="1">Có</option>
+        </select>
+        {% else %}
+        <input type="number" step="any" name="{{ name }}">
+        {% endif %}
+    </div>
+    {% endif %}
+{% endfor %}
+
+
+                <!-- Nút -->
+                <button type="submit">Dự đoán</button>
+                <button type="button" onclick="fillLowRisk()">Mẫu Nguy cơ Thấp</button>
+                <button type="button" onclick="fillHighRisk()">Mẫu Nguy cơ Cao</button>
+                <p><a href="/history">📜 Xem lịch sử dự đoán</a></p>
+
+        </form>
+
+
+
+    </div>
+
+    <script>
+        function fillFormByName(data) {
+            Object.entries(data).forEach(([key, value]) => {
+                const input = document.querySelector(`[name="${key}"]`);
+                if (input) {
+                    if (input.tagName === "SELECT") {
+                        input.value = value === 1 ? "1" : "0";
+                    } else {
+                        input.value = value;
+                    }
+                }
+            });
+        }
+
+        function fillLowRisk() {
+            fillFormByName({
+                "Age": 25,
+                "Number of sexual partners": 1,
+                "First sexual intercourse": 18,
+                "Num of pregnancies": 0,
+                "Smokes": 0,
+                "Smokes (years)": 0,
+                "Smokes (packs/year)": 0,
+                "Hormonal Contraceptives": 1,
+                "Hormonal Contraceptives (years)": 1,
+                "IUD": 0,
+                "IUD (years)": 0,
+                "STDs": 0,
+                "STDs (number)": 0,
+                "STDs:condylomatosis": 0,
+                "STDs:cervical condylomatosis": 0,
+                "STDs:vaginal condylomatosis": 0,
+                "STDs:vulvo-perineal condylomatosis": 0,
+                "STDs:syphilis": 0,
+                "STDs:pelvic inflammatory disease": 0,
+                "STDs:genital herpes": 0,
+                "STDs:molluscum contagiosum": 0,
+                "STDs:AIDS": 0,
+                "STDs:HIV": 0,
+                "STDs:Hepatitis B": 0,
+                "STDs:HPV": 0,
+                "STDs: Number of diagnosis": 0,
+                "STDs: Time since first diagnosis": 0,
+                "STDs: Time since last diagnosis": 0,
+                "Dx:Cancer": 0,
+                "Dx:CIN": 0,
+                "Dx:HPV": 0,
+                "Dx": 0,
+                "Hinselmann": 0,
+                "Schiller": 0,
+                "Citology": 0,
+                "Biopsy": 0
+            });
+        }
+
+        function fillHighRisk() {
+            fillFormByName({
+                "Age": 45,
+                "Number of sexual partners": 6,
+                "First sexual intercourse": 15,
+                "Num of pregnancies": 3,
+                "Smokes": 1,
+                "Smokes (years)": 10,
+                "Smokes (packs/year)": 5,
+                "Hormonal Contraceptives": 0,
+                "Hormonal Contraceptives (years)": 0,
+                "IUD": 1,
+                "IUD (years)": 5,
+                "STDs": 1,
+                "STDs (number)": 2,
+                "STDs:condylomatosis": 1,
+                "STDs:cervical condylomatosis": 1,
+                "STDs:vaginal condylomatosis": 0,
+                "STDs:vulvo-perineal condylomatosis": 1,
+                "STDs:syphilis": 0,
+                "STDs:pelvic inflammatory disease": 1,
+                "STDs:genital herpes": 0,
+                "STDs:molluscum contagiosum": 0,
+                "STDs:AIDS": 0,
+                "STDs:HIV": 0,
+                "STDs:Hepatitis B": 0,
+                "STDs:HPV": 1,
+                "STDs: Number of diagnosis": 5,
+                "STDs: Time since first diagnosis": 3,
+                "STDs: Time since last diagnosis": 1,
+                "Dx:Cancer": 0,
+                "Dx:CIN": 1,
+                "Dx:HPV": 1,
+                "Dx": 1,
+                "Hinselmann": 1,
+                "Schiller": 1,
+                "Citology": 1,
+                "Biopsy": 1
+            });
+        }
+
+        function closeModal() {
+            document.getElementById("resultModal").style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById("resultModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+
+    </script>
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Kết quả dự đoán</h2>
+            <div id="modalResultText"></div>
+            <div id="modalAdviceBox" class="advice-box"></div>
+            <img id="modalShapImage" src="" width="600px">
+        </div>
+    </div>
+    {% if result is not none %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const resultText = `
+            <p><strong>{{ "🔴 Nguy cơ cao mắc ung thư cổ tử cung!" if proba >=25 else "🟢 Không có nguy cơ đáng kể." }}</strong></p>
+            <p>Xác suất mô hình dự đoán: <strong>{{ proba }}%</strong></p>
+        `;
+            const adviceText = `{{ advice | safe }}`;
+            const shapPath = "{{ url_for('static', filename='shap_plot.png') }}";
+            const extraInsight = `{{ extra_insight | safe }}`;
+            
+
+            document.getElementById("modalResultText").innerHTML = resultText;
+            document.getElementById("modalAdviceBox").innerHTML = adviceText;
+             document.getElementById("modalShapImage").src = shapPath;
+            document.getElementById("modalAdviceBox").innerHTML = adviceText + "<hr><h3>🧠 Phân tích từ AI:</h3><p>" + extraInsight + "</p>";
+            // Mở modal
+            document.getElementById("resultModal").style.display = "block";
+        });
+    </script>
+    {% endif %}
+
+    <script>
+       function handleDependency(parentName) {
+    const parentSelect = document.querySelector(`[name="${parentName}"]`);
+    const value = parentSelect.value;
+
+    const children = document.querySelectorAll(`.dependent-field.${parentName}-child`);
+    children.forEach(child => {
+        const input = child.querySelector("input");
+        if (value === "1") {
+            child.classList.remove("hidden");
+        } else {
+            child.classList.add("hidden");
+            if (input) input.value = ""; // ✅ Xoá giá trị nếu ẩn
+        }
+    });
+}
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Kích hoạt trạng thái phụ thuộc khi load lại
+            ["Smokes", "Hormonal Contraceptives", "IUD", "STDs"].forEach(handleDependency);
+        });
+    </script>
+
+    <!-- Floating chat button -->
+<div id="chatButton" onclick="toggleChatbox()">💬</div>
+
+<!-- Chatbox UI -->
+<div id="chatbox" class="hidden">
+    <div class="chat-header">
+        🤖 Trợ lý AI Y tế
+        <span class="close-btn" onclick="toggleChatbox()">×</span>
+    </div>
+    <div id="chat-log" class="chat-log">
+        <div class="ai-message"><strong>AI:</strong> {{ extra_insight | safe }}</div>
+    </div>
+    <div class="chat-input-area">
+        <input type="text" id="user-input" placeholder="Hỏi thêm về sức khoẻ..." />
+        <button onclick="sendMessage()">Gửi</button>
+    </div>
+</div>
+<script>
+    function toggleChatbox() {
+        document.getElementById("chatbox").classList.toggle("hidden");
+    }
+
+    async function sendMessage() {
+        const input = document.getElementById("user-input");
+        const message = input.value.trim();
+        if (!message) return;
+
+        const chatLog = document.getElementById("chat-log");
+        chatLog.innerHTML += `<div class="user-message"><strong>Bạn:</strong> ${message}</div>`;
+        input.value = "";
+
+        try {
+            const res = await fetch("/ask", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: message })
+            });
+            const data = await res.json();
+            chatLog.innerHTML += `<div class="ai-message"><strong>AI:</strong> ${data.reply}</div>`;
+            chatLog.scrollTop = chatLog.scrollHeight;
+        } catch (e) {
+            chatLog.innerHTML += `<div class="ai-message"><em>Lỗi phản hồi từ AI.</em></div>`;
+        }
+    }
+</script>
+<script>
+    function openChatbox() {
+        const chatbox = document.getElementById("chatbox");
+        chatbox.classList.remove("hidden");
+        chatbox.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function toggleChatbox() {
+        document.getElementById("chatbox").classList.toggle("hidden");
+    }
+
+    // sendMessage() bạn đã có ở trên
+</script>
+
+    </div>
+
+    <footer>
+  <p>©2021 Bản quyền thuộc về Nhóm X</p>
+  <div class="social-icons">
+      <a href="https://www.facebook.com/CTUDHCT/?locale=vi_VN" class="iconfoot" aria-label="Facebook">
+        <i class="fa-brands fa-facebook"></i>
+      </a>
+      <a href="#" class="iconfoot" aria-label="Twitter">
+        <i class="fa-brands fa-x-twitter"></i>
+      </a>
+      <a href="#" class="iconfoot" aria-label="Pinterest">
+  <i class="fa-brands fa-pinterest"></i>
+      </a>
+      <a href=""></a>
+  </div>
+  </footer>
+
+    <!-- Các đoạn script (jQuery, hotline, AI chat, ... -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://web.cmbliss.com/webtools/hotline/js/hotline.js"></script>
+    <script type="text/javascript">
+        $("body").hotline({
+            phone: "0945720038",
+            p_bottom: true,
+            bottom: 0,
+            p_left: true,
+            left: 0,
+            bg_color: "#e60808",
+            abg_color: "rgba(230, 8, 8, 0.7)",
+            show_bar: true,
+            position: "fixed",
+        });
+    </script>
+
+
+</body>
+
+</html>

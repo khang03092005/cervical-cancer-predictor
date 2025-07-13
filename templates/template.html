@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dự đoán Ung thư Cổ tử cung{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='private.css') }}">
+</head>
+
+<body>
+   <div class="wrapper">
+<header class="header">
+    <div class="grid">
+      <nav class="header__navbar">
+        <!-- Nhóm trái: logo + menu -->
+        <div class="header__navbar-left">
+          <a href="/" class="header__logo">
+            <img src="/static/images/depositphotos_89720090-stock-illustration-breast-cancer-awareness-removebg-preview.png" alt="Logo" class="header__logo-img">
+          </a>
+
+          <ul class="header__navbar-list">
+            <li class="header__navbar-item header__navbar-item--doc">
+              <a href="/history" class="header__navbar-item-link">
+                <i class="fa-solid fa-clock-rotate-left"></i> Xem lịch sử dự đoán
+              </a>
+            </li>
+
+            <li class="header__navbar-item header__navbar-item--doc">
+              <a href="https://bvubct.vn/" class="header__navbar-item-link">
+                <i class="fa-solid fa-link"></i> Kết nối
+              </a>
+            </li>
+
+            <li class="header__navbar-item">
+              <a href="/monitor" class="header__navbar-item-link">
+                <i class="fa-solid fa-user-doctor"></i> Theo dõi Sức khỏe
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Nhóm giữa -->
+        <div class="header__navbar-center">
+          <h1 class="header__slogan">Vì một tương lai không còn ung thư cổ tử cung.</h1>
+        </div>
+
+        <!-- Nhóm phải -->
+       <!-- Nhóm phải -->
+        <div class="header__navbar-right">
+        <ul class="header__navbar-list">
+            <li class="header__navbar-item">
+            <a href="#" class="header__navbar-item-link" onclick="openChatbox()">
+                <i class="fa-solid fa-circle-question"></i> Trợ giúp
+            </a>
+          </li>
+        </ul>
+        </div>
+
+      </nav>
+    </div>
+  </header>
+
+<!-- Nội dung trang con sẽ được render ở đây -->
+<main>
+  {% block content %}
+  <!-- Nội dung cụ thể sẽ được trang con ghi đè -->
+  {% endblock %}
+</main>
+
+<!-- Modal hiển thị kết quả dự đoán -->
+<div id="resultModal" class="modal">
+  <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Kết quả dự đoán</h2>
+      <div id="modalResultText"></div>
+      <div id="modalAdviceBox" class="advice-box"></div>
+      <img id="modalShapImage" src="" width="600px">
+  </div>
+</div>
+
+<!-- Floating chat button -->
+<div id="chatButton" onclick="toggleChatbox()">💬</div>
+
+<!-- Chatbox UI -->
+<div id="chatbox" class="hidden">
+  <div class="chat-header">
+      🤖 Trợ lý AI Y tế
+      <span class="close-btn" onclick="toggleChatbox()">×</span>
+  </div>
+  <div id="chat-log" class="chat-log">
+      {% if extra_insight %}
+      <div class="ai-message"><strong>AI:</strong> {{ extra_insight | safe }}</div>
+      {% endif %}
+  </div>
+  <div class="chat-input-area">
+      <input type="text" id="user-input" placeholder="Hỏi thêm về sức khoẻ..." />
+      <button onclick="sendMessage()">Gửi</button>
+  </div>
+</div>
+
+<!-- Script chung -->
+<script>
+  function toggleChatbox() {
+      document.getElementById("chatbox").classList.toggle("hidden");
+  }
+
+  function openChatbox() {
+      const chatbox = document.getElementById("chatbox");
+      chatbox.classList.remove("hidden");
+      chatbox.scrollIntoView({ behavior: "smooth" });
+  }
+
+  async function sendMessage() {
+      const input = document.getElementById("user-input");
+      const message = input.value.trim();
+      if (!message) return;
+
+      const chatLog = document.getElementById("chat-log");
+      chatLog.innerHTML += `<div class="user-message"><strong>Bạn:</strong> ${message}</div>`;
+      input.value = "";
+      input.focus();
+
+      try {
+          const res = await fetch("/ask", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: message })
+          });
+          const data = await res.json();
+          chatLog.innerHTML += `<div class="ai-message"><strong>AI:</strong> ${data.reply}</div>`;
+          chatLog.scrollTop = chatLog.scrollHeight;
+      } catch (e) {
+          chatLog.innerHTML += `<div class="ai-message"><em>Lỗi phản hồi từ AI.</em></div>`;
+      }
+  }
+
+  function closeModal() {
+      document.getElementById("resultModal").style.display = "none";
+  }
+
+  window.onclick = function (event) {
+      const modal = document.getElementById("resultModal");
+      if (event.target == modal) {
+          modal.style.display = "none";
+      }
+  }
+</script>
+
+</div>
+
+<footer>
+  <p>©2021 Bản quyền thuộc về Nhóm X</p>
+  <div class="social-icons">
+      <a href="https://www.facebook.com/CTUDHCT/?locale=vi_VN" class="iconfoot" aria-label="Facebook">
+        <i class="fa-brands fa-facebook"></i>
+      </a>
+      <a href="#" class="iconfoot" aria-label="Twitter">
+        <i class="fa-brands fa-x-twitter"></i>
+      </a>
+      <a href="#" class="iconfoot" aria-label="Pinterest">
+  <i class="fa-brands fa-pinterest"></i>
+      </a>
+      <a href=""></a>
+  </div>
+  </footer>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="https://web.cmbliss.com/webtools/hotline/js/hotline.js"></script>
+<script type="text/javascript">
+$("body").hotline({
+    phone:"0986822596",
+    p_bottom:true,
+    bottom:0,
+    p_left:true,
+    left:0,
+    bg_color:"#e60808",
+    abg_color:"rgba(230, 8, 8, 0.7)",
+    show_bar:true,
+    position:"fixed",
+});
+</script>
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

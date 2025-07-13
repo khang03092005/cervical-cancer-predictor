@@ -1,0 +1,91 @@
+{% extends "template.html" %}
+
+{% block title %}Theo dõi Dự đoán{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">📊 Biểu đồ theo dõi nguy cơ Ung thư Cổ tử cung</h1>
+
+    {% if labels and probabilities %}
+        <!-- Biểu đồ -->
+        <canvas id="myChart" height="100"></canvas>
+
+        <!-- Nhúng dữ liệu dưới dạng JSON an toàn -->
+        <script id="labels-data" type="application/json">{{ labels | tojson | safe }}</script>
+        <script id="probabilities-data" type="application/json">{{ probabilities | tojson | safe }}</script>
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const labels = JSON.parse(document.getElementById("labels-data").textContent || "[]");
+            const data = JSON.parse(document.getElementById("probabilities-data").textContent || "[]");
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Xác suất nguy cơ (%)',
+                        data: data,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 10
+                            }
+                        }
+                    }
+                }
+            });
+        </script>
+
+        <!-- Lịch sử -->
+        <h3>Lịch sử dự đoán</h3>
+        <table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Lần</th>
+            <th>Thời gian</th>
+            <th>Kết quả</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in history %}
+        <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ p.get("timestamp", "N/A") }}</td>
+            <td>
+                {% if p.proba >= 25 %}
+                    🔴 Nguy cơ cao ({{ p.proba }}%)
+                {% else %}
+                    🟢 Nguy cơ thấp ({{ p.proba }}%)
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    <form action="{{ url_for('clear_history') }}" method="get" style="margin-top: 20px;">
+    <button type="submit" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa toàn bộ lịch sử?')">
+        🗑️ Xóa toàn bộ lịch sử
+    </button>
+</form>
+
+
+    {% else %}
+        <p>❗ Hiện chưa có dữ liệu dự đoán để hiển thị.</p>
+    {% endif %}
+
+    <br>
+    <a href="/" class="btn btn-secondary">&larr; Quay về trang chính</a>
+</div>
+{% endblock %}
