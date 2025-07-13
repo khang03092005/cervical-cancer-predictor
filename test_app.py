@@ -8,13 +8,12 @@ def client():
     with app.test_client() as client:
         yield client
 
-# ✅ Test trang chủ (GET /)
+
 def test_home_page(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "Dự đoán".encode("utf-8") in response.data
 
-# ✅ Test API /ask với mock OpenRouter
 @patch("app.ask_openrouter", return_value="Phản hồi giả lập cho test")
 def test_ask_api(mocked, client):
     response = client.post("/ask", json={"prompt": "HPV là gì?"})
@@ -23,7 +22,6 @@ def test_ask_api(mocked, client):
     assert "reply" in data
     assert data["reply"] == "Phản hồi giả lập cho test"
 
-# ✅ Test trang /history với dữ liệu session
 def test_history_page(client):
     with client.session_transaction() as sess:
         sess["history"] = [
@@ -37,9 +35,9 @@ def test_history_page(client):
         ]
     response = client.get("/history")
     assert response.status_code == 200
-    assert b"L" in response.data  # Kiểm tra nhẹ nội dung
+    assert b"L" in response.data  
 
-# ✅ Test route /monitor
+
 def test_monitor_page(client):
     with client.session_transaction() as sess:
         sess["history"] = [

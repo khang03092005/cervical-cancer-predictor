@@ -243,7 +243,7 @@ def index():
         except Exception as e:
             return f"Lỗi xử lý dữ liệu: {e}"
     return render_template("index.html", features=feature_names, result=None)
-from flask import jsonify  # Nếu chưa có thì thêm
+from flask import jsonify  
 
 @app.route("/ask", methods=["POST"])
 def ask():
