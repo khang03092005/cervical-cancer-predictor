@@ -59,6 +59,17 @@
        <!-- Nhóm phải -->
         <div class="header__navbar-right">
         <ul class="header__navbar-list">
+            <li class="header__navbar-item header__navbar-donate">
+              <a href="#" class="header__navbar-item-link">
+                <i class="fa-solid fa-hand-holding-heart"></i> Donate
+              </a>
+              <div class="donate-popup">
+                <img src="{{ url_for('static', filename='images/phuong.png') }}" alt="QR Donate" class="donate-qr">
+
+
+                <p class="donate-text">Sự đóng góp của bạn là động lực của chúng tôi</p>
+              </div>
+            </li>
             <li class="header__navbar-item">
             <a href="#" class="header__navbar-item-link" onclick="openChatbox()">
                 <i class="fa-solid fa-circle-question"></i> Trợ giúp
@@ -168,7 +179,7 @@
                 <button type="submit">Dự đoán</button>
                 <button type="button" onclick="fillLowRisk()">Mẫu Nguy cơ Thấp</button>
                 <button type="button" onclick="fillHighRisk()">Mẫu Nguy cơ Cao</button>
-                <p><a href="/history">📜 Xem lịch sử dự đoán</a></p>
+                
 
         </form>
 
@@ -402,7 +413,7 @@
     </div>
 
     <footer>
-  <p>©2021 Bản quyền thuộc về Nhóm X</p>
+  <p>©2025 Bản quyền thuộc về Nhóm 5</p>
   <div class="social-icons">
       <a href="https://www.facebook.com/CTUDHCT/?locale=vi_VN" class="iconfoot" aria-label="Facebook">
         <i class="fa-brands fa-facebook"></i>
