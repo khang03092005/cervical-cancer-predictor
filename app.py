@@ -54,6 +54,15 @@ from feature_advice import feature_advice  # Load mô tả
 
 app = Flask(__name__)
 app.secret_key = "super-secret-key" 
+@app.route('/')
+def home():
+    return "Chào mừng bạn đến với Flask trên Render!"
+
+if __name__ == '__main__':
+    # Lấy cổng từ biến môi trường Render
+    port = int(os.environ.get("PORT", 5000))
+    # Mở host ra toàn thế giới và đúng port Render yêu cầu
+    app.run(host='0.0.0.0', port=port)
 
 feature_names = ['Age', 'Number of sexual partners', 'First sexual intercourse',
     'Num of pregnancies', 'Smokes', 'Smokes (years)', 'Smokes (packs/year)',
