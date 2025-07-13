@@ -244,9 +244,9 @@ def index():
             })
 
             session.modified = True
-            return render_template("index.html", features=feature_names,
-                                   result=prediction, proba=round(proba, 2),
-                                   advice=advice, extra_insight=extra_insight)
+            return render_template("index.html", features=feature_names, result=None, proba=None, advice=None, extra_insight=None)
+
+
 
 
         except Exception as e:
