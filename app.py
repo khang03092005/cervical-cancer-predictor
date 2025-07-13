@@ -56,7 +56,7 @@ app = Flask(__name__)
 app.secret_key = "super-secret-key" 
 @app.route('/')
 def home():
-    return "Chào mừng bạn đến với Flask trên Render!"
+    return render_template('index.html')
 
 if __name__ == '__main__':
     # Lấy cổng từ biến môi trường Render
